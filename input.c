@@ -2,15 +2,27 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#define WASD
+
 int main(int argc, char **argv) {
   system("stty raw");
+
+  #ifdef WASD
+  enum { LEFT = 'A',
+	 DOWN = 'S',
+	 UP = 'W',
+	 RIGHT = 'D',
+	 QUIT = 'Q' };
+  #endif
   
+  #ifdef HJKL
   enum { LEFT = 'H',
 	 DOWN = 'J',
 	 UP = 'K',
 	 RIGHT = 'L',
 	 QUIT = 'Q' };
-  
+  #endif
+
   char c = toupper(getchar());
   
   switch(c) {

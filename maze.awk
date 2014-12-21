@@ -128,32 +128,32 @@ function generateMaze() {
 function drawMaze() {
     system("clear");
 
-    # Печать верхней границы
     print " ";
     for(i = 0; i < sizeX; i++) {
-	print "_ ";
+	print "____ ";
     }
     print "\n";
 
-    # Печать строк
     for(i = 0; i < sizeY; i++) {
 	offset = i * sizeX;
-
-	print "|";
-	for(j = offset; j < offset + sizeX; j++) {
-	    # Печать нижней границы
-	    if(bottomBound[j]) {
-		print "_";
+	for(k = 0; k < 2; k++) {
+	    print "|";
+	    for(j = offset; j < offset + sizeX; j++) {
+		if(k == 0) {
+		    if(position == j) print "ಠ_ಠ ";
+		    else print "    ";
+		    if(rightBound[j]) print "|";
+		    else print " ";
+		}
+		if(k == 1) {
+		    if(bottomBound[j]) print "____";
+		    else print "    ";
+		    if(rightBound[j]) print "|";
+		    else print " ";
+		}
 	    }
-	    else print " ";
-
-	    # Печать правой границы
-	    if(rightBound[j]) {
-		print "|";
-	    }
-	    else print " ";
+	    print "\n";
 	}
-	print"\n";
     }
 }
 
@@ -183,12 +183,47 @@ function union(set1, set2) {
 }
 
 function gameLoop() {
+    # Позиция игрока
+    position = 0;
     while(1) {
 	drawMaze();
 
 	"./input" | getline input
 	close("./input");
 
-	if(input == "QUIT") break;
+	if(input == "LEFT") goLeft();
+	if(input == "DOWN") goDown();
+	if(input == "UP") goUp();
+	if(input == "RIGHT") goRight();
+	if(input == "QUIT") exit;
     }
+}
+
+function goLeft() {
+    if((position % sizeX != 0) && !rightBound[position-1]) {
+	position -= 1;
+    }
+    else print "\a";
+}
+
+function goDown() {
+    if(!bottomBound[position]) {
+	position += sizeX;
+    }
+    else print "\a";
+}
+
+function goUp() {
+    above = position - sizeX;
+    if((above >= 0) && !bottomBound[above]) {
+	position -= sizeX;
+    }
+    else print "\a";
+}
+
+function goRight() {
+    if(!rightBound[position]) {
+	position += 1;
+    }
+    else print "\a";
 }
