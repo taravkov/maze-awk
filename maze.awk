@@ -15,14 +15,9 @@ function main() {
 }
 
 function generateMaze() {
-    sizeX = 16;
-    sizeY = 16;
+    sizeX = 8;
+    sizeY = 8;
     size = sizeX * sizeY; # Размер лабиринта (количество ячеек)
-
-    set[size]; # Множество, содержащее ячейку
-    rightBound[size]; # Правые границы ячеек
-    bottomBound[size]; # Нижние границы ячеек
-
     setUnique = 1; # Текущий номер уникального множества
 
     # Инициализируем переменные
@@ -33,9 +28,8 @@ function generateMaze() {
     }
 
     # Цикл по строкам лабиринта
-    for(i = 0; i < sizeY - 1; i++) {
+    for(i = 0; i < sizeY; i++) {
 	offset = i * sizeX;
-
 	# Цикл по столбцам лабиринта
 	for(j = offset; j < offset + sizeX; j++) {
 	    # Присвоим пустым ячейкам уникальное множество
@@ -45,7 +39,7 @@ function generateMaze() {
 	}
 
 	# Создадим границы справа
-	for(j = offset; j < offset + sizeX - 1; j++) {
+	for(j = offset; j < offset + (sizeX - 1); j++) {
 	    # Решим, добавлять ли границу справа
 	    bound = rand();
 	    if(bound > 0.5) bound = 1;
@@ -94,45 +88,39 @@ function generateMaze() {
 		}
 	    }
 	    if(alone) bound = 0;
-
 	    if(bound) bottomBound[j] = 1;
 	}
 
-	# Скопируем строку в следующую
-	for(j = offset; j < offset + sizeX; j++) {
-	    set[sizeX+j] = set[j];
-	    bottomBound[sizeX+j] = bottomBound[j];
+	if(i != (sizeY - 1)) {
+	    # Скопируем строку в следующую
+	    for(j = offset; j < offset + sizeX; j++) {
+		set[sizeX+j] = set[j];
+		bottomBound[sizeX+j] = bottomBound[j];
 
-	    # Удалим ячейки с нижней границей из их множества
-	    if(bottomBound[sizeX+j]) {
-		set[sizeX+j] = 0;
+		# Удалим ячейки с нижней границей из их множества
+		if(bottomBound[sizeX+j]) {
+		    set[sizeX+j] = 0;
+		}
+		# Удалим все нижние границы
+		bottomBound[sizeX+j] = 0;
 	    }
-	    # Удалим все нижние границы
-	    bottomBound[sizeX+j] = 0;
-	}	
-    }
+	}
+	else {
+	    for(j = offset; j < offset + (sizeX - 1); j++) {
+		# Добавим нижнюю границу к каждой ячейке
+		bottomBound[j] = 1;
 
-    # Скопируем предпоследнюю строку
-    for(i = size - sizeX; i < size; i++) {
-	set[i] = set[i-sizeX];
-	rightBound[i] = rightBound[i-sizeX];
-	bottomBound[i] = bottomBound[i-sizeX];
-    }
-
-    # Последняя строка
-    for(i = size - sizeX; i < size - 1; i++) {
-	# Добавим нижнюю границу к каждой ячейке
-	bottomBound[i] = 1;
-
-	# Удалим правую границу, если соседние
-	# ячейки принадлежат разным множествам
-	if(set[i] != set[i+1]) {
-	    rightBound[i] = 0;
-	    # И объеденим эти множества
-	    union(set[i], set[i+1]);
+		# Удалим правую границу, если соседние
+		# ячейки принадлежат разным множествам
+		if(set[j] != set[j+1]) {
+		    rightBound[j] = 0;
+		    # И объеденим эти множества
+		    union(set[j], set[j+1]);
+		}
+	    }
+	    bottomBound[size-1] = 1;	
 	}
     }
-    bottomBound[size-1] = 1;
 }
 
 function drawMaze() {
