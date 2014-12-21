@@ -5,13 +5,15 @@ BEGIN {
     OFS = "";
     ORS = "";
 
+    system("gcc -lcurses -o input input.c");
+
     srand();
     main();
 }
 
 function main() {
     generateMaze();
-    drawMaze();
+    gameLoop();
 }
 
 function generateMaze() {
@@ -124,6 +126,8 @@ function generateMaze() {
 }
 
 function drawMaze() {
+    system("clear");
+
     # Печать верхней границы
     print " ";
     for(i = 0; i < sizeX; i++) {
@@ -175,5 +179,16 @@ function union(set1, set2) {
 	if(set[s] == set2) {
 	    set[s] = set1;
 	}
+    }
+}
+
+function gameLoop() {
+    while(1) {
+	drawMaze();
+
+	"./input" | getline input
+	close("./input");
+
+	if(input == "QUIT") break;
     }
 }
