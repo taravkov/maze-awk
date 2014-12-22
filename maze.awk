@@ -20,7 +20,7 @@ function main() {
 function generateMaze() {
     sizeX = 8;
     sizeY = 8;
-    visibleX = 4;
+    visibleX = 8;
     visibleY = 4;
     size = sizeX * sizeY; # Размер лабиринта (количество ячеек)
     setUnique = 1; # Текущий номер уникального множества
@@ -205,7 +205,7 @@ function gameLoop() {
     # Позиция игрока
     position = 0;
     # Выход
-    winPosition = size - 1;
+    winPosition = size;
     rightBound[size-1] = 0;
     drawOriginX = 0;
     drawOriginY = 0;
@@ -273,8 +273,14 @@ function goRight() {
 }
 
 function youWin() {
-    while(1) {    
-	system("clear");
+    system("clear");
+    system("cat ./win.txt");
+
+    while(1) {
+	"./input" | getline input
+	close("./input");
+
+	if(input == "QUIT") quit();
     }
 }
 
