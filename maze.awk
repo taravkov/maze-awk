@@ -6,6 +6,7 @@ BEGIN {
     ORS = "";
 
     system("gcc -lcurses -o input input.c");
+    system("tput civis");
 
     srand();
     main();
@@ -149,7 +150,11 @@ function drawMaze() {
     for(i = drawOriginY; i < drawOriginY + visibleY; i++) {
 	offset = (i * sizeX) + drawOriginX;
 	for(k = 0; k < 2; k++) {
-	    print "|";
+	    if(drawOriginX == 0) print "|";
+	    else {
+		if(rightBound[offset-1]) print "|";
+		else print " ";
+	    }
 	    for(j = offset; j < offset + visibleX; j++) {
 		if(k == 0) {
 		    if(position == j) print "ಠ_ಠ ";
@@ -167,6 +172,8 @@ function drawMaze() {
 	    print "\n";
 	}
     }
+
+    print "Steps: " steps "\n";
 }
 
 function debug(row) {
@@ -202,6 +209,7 @@ function gameLoop() {
     rightBound[size-1] = 0;
     drawOriginX = 0;
     drawOriginY = 0;
+    steps = 0;
 
     while(1) {
 	if(position == winPosition) break;
@@ -215,7 +223,9 @@ function gameLoop() {
 	if(input == "DOWN") goDown();
 	if(input == "UP") goUp();
 	if(input == "RIGHT") goRight();
-	if(input == "QUIT") exit;
+	if(input == "QUIT") quit();
+
+	steps++;
     }
 
     youWin();
@@ -224,6 +234,9 @@ function gameLoop() {
 function goLeft() {
     if((position % sizeX != 0) && !rightBound[position-1]) {
 	position -= 1;
+	if((position % sizeX) < drawOriginX) {
+	    drawOriginX -= visibleX;
+	}
     }
     else print "\a";
 }
@@ -252,6 +265,9 @@ function goUp() {
 function goRight() {
     if(!rightBound[position]) {
 	position += 1;
+	if((position % sizeX) >= (drawOriginX + visibleX)) {
+	    drawOriginX += visibleX;
+	}
     }
     else print "\a";
 }
@@ -260,4 +276,9 @@ function youWin() {
     while(1) {    
 	system("clear");
     }
+}
+
+function quit() {
+    system("tput cnorm");
+    exit;
 }
