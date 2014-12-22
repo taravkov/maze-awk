@@ -19,6 +19,8 @@ function main() {
 function generateMaze() {
     sizeX = 8;
     sizeY = 8;
+    visibleX = 4;
+    visibleY = 4;
     size = sizeX * sizeY; # Размер лабиринта (количество ячеек)
     setUnique = 1; # Текущий номер уникального множества
 
@@ -128,17 +130,27 @@ function generateMaze() {
 function drawMaze() {
     system("clear");
 
+    # Печать верхней границы
     print " ";
-    for(i = 0; i < sizeX; i++) {
-	print "____ ";
+    if(drawOriginY == 0) {
+	for(i = 0; i < visibleX; i++) {
+	    print "____ ";
+	}
+    }
+    else {
+	offset = (drawOriginY * sizeX) + drawOriginX - sizeX;
+	for(i = offset; i < offset + visibleX; i++) {
+	    if(bottomBound[i]) print "____ "
+	    else print "     ";
+	}
     }
     print "\n";
 
-    for(i = 0; i < sizeY; i++) {
-	offset = i * sizeX;
+    for(i = drawOriginY; i < drawOriginY + visibleY; i++) {
+	offset = (i * sizeX) + drawOriginX;
 	for(k = 0; k < 2; k++) {
 	    print "|";
-	    for(j = offset; j < offset + sizeX; j++) {
+	    for(j = offset; j < offset + visibleX; j++) {
 		if(k == 0) {
 		    if(position == j) print "ಠ_ಠ ";
 		    else print "    ";
@@ -185,7 +197,15 @@ function union(set1, set2) {
 function gameLoop() {
     # Позиция игрока
     position = 0;
+    # Выход
+    winPosition = size - 1;
+    rightBound[size-1] = 0;
+    drawOriginX = 0;
+    drawOriginY = 0;
+
     while(1) {
+	if(position == winPosition) break;
+
 	drawMaze();
 
 	"./input" | getline input
@@ -197,6 +217,8 @@ function gameLoop() {
 	if(input == "RIGHT") goRight();
 	if(input == "QUIT") exit;
     }
+
+    youWin();
 }
 
 function goLeft() {
@@ -209,6 +231,9 @@ function goLeft() {
 function goDown() {
     if(!bottomBound[position]) {
 	position += sizeX;
+	if((position / sizeX) >= (drawOriginY + visibleY)) {
+	    drawOriginY += visibleY;
+	}
     }
     else print "\a";
 }
@@ -217,6 +242,9 @@ function goUp() {
     above = position - sizeX;
     if((above >= 0) && !bottomBound[above]) {
 	position -= sizeX;
+	if((position / sizeX) < drawOriginY) {
+	    drawOriginY -= visibleY;
+	}
     }
     else print "\a";
 }
@@ -226,4 +254,10 @@ function goRight() {
 	position += 1;
     }
     else print "\a";
+}
+
+function youWin() {
+    while(1) {    
+	system("clear");
+    }
 }
