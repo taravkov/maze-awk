@@ -5,7 +5,7 @@ BEGIN {
     OFS = "";
     ORS = "";
 
-    system("gcc -lcurses -o input input.c");
+    system("gcc -o input input.c");
     system("tput civis");
 
     srand();
