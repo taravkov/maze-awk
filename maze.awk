@@ -21,7 +21,7 @@ function generateMaze() {
     sizeX = 8;
     sizeY = 8;
     visibleX = 8;
-    visibleY = 4;
+    visibleY = 8;
     size = sizeX * sizeY; # Размер лабиринта (количество ячеек)
     setUnique = 1; # Текущий номер уникального множества
 
